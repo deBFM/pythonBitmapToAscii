@@ -1,6 +1,7 @@
 import math
 
 def readBytes(fileName):
+    #TODO as Context
     file = open(fileName, "rb", 0)
     bytes = file.read(-1)
     file.close()
@@ -30,19 +31,6 @@ def getHeight(bytes):
 def getPixelArrayBytes(bytes):
     return bytes[getPixelArrayOffset(bytes):]
 
-#Obsolete Funktion
-def sortPixelsByRow(pixels, rowLength):
-    rows = []
-    row = []
-    count = 1
-    for pixel in pixels:
-        row.append(pixel)
-        if count % rowLength == 0:
-            rows.append(row)
-            row = []
-        count += 1
-    return rows
-
 def getPixels(bytes):
     #Todo: Die Bits werden Zeilenweise geschrieben. Eine neue Zeile fängt mit einem neuen Byte an.
     #      Wieviele Bytes eine Zeile hat, ergibt sich aus der width des Bildes!
@@ -56,16 +44,13 @@ def getPixels(bytes):
     rowCount = getHeight(bytes)
     pixelArrayBytes = getPixelArrayBytes(bytes)
     for i in range(0, rowCount):
-        sliceStart = (i * bytesPerRow)
-        sliceStop = sliceStart + bytesPerRow
-        rowBytes = pixelArrayBytes[sliceStart:sliceStop]
+        rowBytes = pixelArrayBytes[(i * bytesPerRow):(i * bytesPerRow + bytesPerRow)]
         pixelRow = []
         for rowByte in rowBytes:
             for bit in bin(rowByte)[2:].rjust(8,"0"):
                 pixelRow.append(bit)
         pixels.append(pixelRow[:getWidth(bytes)])
-    pixels = reversed(pixels)
-    return pixels
+    return reversed(pixels)
 
 def paint(pixels):
     for row in pixels:
@@ -86,6 +71,4 @@ def printMetaData(bytes):
 #TODO Check for monochrome Bitmap (see Headers)
 bytes = readBytes("monochromHelloWorld.bmp")
 printMetaData(bytes)
-pixels = getPixels(bytes)
-paint(pixels)
-
+paint(getPixels(bytes))

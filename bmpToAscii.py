@@ -1,7 +1,7 @@
 import math
 from argparse import ArgumentParser
 
-def readBytes(fileName):
+def readFile(fileName):
     #TODO as Context
     #TODO catch Exception
     file = open(fileName, "rb", 0)
@@ -57,10 +57,8 @@ def getPixels(bytes):
 def paint(pixels):
     for row in pixels:
         for pixel in row:
-            if(pixel == "1"):
-                print(" ", end="")
-            else:
-                print("\u25A0", end="")
+            char = " " if (pixel == "1") else "\u25A0"
+            print(char, end="")
         print()
 
 def printMetaData(bytes, args):
@@ -76,13 +74,22 @@ def arguments():
     parser.add_argument("file", help="Bitmap filename")
     return parser.parse_args()
 
+def checkFile(bytes):
+    if not (bytes[0x00] == ord("B") and bytes[0x01] == ord("M")):
+        print("Error: This is not a bitmap file")
+        exit(1)
+    if not (bytes[0x1c] == 1):
+        print("Error: Only monochrom bitmaps are supported yet")
+        exit(1)
 
 #############################
 # Format: BMP (Monochrome)  #
 #############################
 #TODO Check for monochrome Bitmap (see Headers)
 args = arguments()
-bytes = readBytes(args.file)
+bytes = readFile(args.file)
+
+checkFile(bytes) #TODO: Remove the site effects!
 if args.verbose:
     printMetaData(bytes, args)
 paint(getPixels(bytes))

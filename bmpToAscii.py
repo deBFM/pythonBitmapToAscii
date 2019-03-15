@@ -1,7 +1,9 @@
 import math
+from argparse import ArgumentParser
 
 def readBytes(fileName):
     #TODO as Context
+    #TODO catch Exception
     file = open(fileName, "rb", 0)
     bytes = file.read(-1)
     file.close()
@@ -56,19 +58,31 @@ def paint(pixels):
     for row in pixels:
         for pixel in row:
             if(pixel == "1"):
-                print("\u25a1", end="") #White square
+                print(" ", end="")
             else:
-                print("\u2b1b", end="") #Black square
+                print("\u25A0", end="")
         print()
 
-def printMetaData(bytes):
-    print("Size: " + str(getWidth(bytes)) + " x " + str(getHeight(bytes)))
+def printMetaData(bytes, args):
+    print("Size: {:>8d} x {:d}".format(getWidth(bytes), getHeight(bytes)))
+    print(f"Filename: {args.file:>19}")
+
+def arguments():
+    parser = ArgumentParser(description="Prints monochrom bitmaps to the console",
+                            epilog="Just a Python learning project of mine",
+                            usage="Try %(prog)s --help"
+                            )
+    parser.add_argument("-v", help="verbose", action="store_true", dest="verbose")
+    parser.add_argument("file", help="Bitmap filename")
+    return parser.parse_args()
 
 
 #############################
 # Format: BMP (Monochrome)  #
 #############################
 #TODO Check for monochrome Bitmap (see Headers)
-bytes = readBytes("monochromHelloWorld.bmp")
-printMetaData(bytes)
+args = arguments()
+bytes = readBytes(args.file)
+if args.verbose:
+    printMetaData(bytes, args)
 paint(getPixels(bytes))

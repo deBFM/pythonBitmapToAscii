@@ -18,13 +18,11 @@ def getPixelArrayOffset(bytes):
     """
     return int.from_bytes(bytes[0x0a:0x0e], 'little')
 
-
 def getWidth(bytes):
     """
     Width:  0x12 (4Bytes)
     """
     return int.from_bytes(bytes[0x12:0x16], 'little')
-
 
 def getHeight(bytes):
     """
@@ -70,19 +68,16 @@ def arguments():
     parser.add_argument("file", help="Bitmap filename")
     return parser.parse_args()
 
-def checkFile(bytes):
+def checkFormat(bytes):
     if not (bytes[0x00] == ord("B") and bytes[0x01] == ord("M")):
-        print("Error: This is not a bitmap file")
-        exit(1)
+        sys.exit("Error: This is not a bitmap file")
     if not (bytes[0x1c] == 1):
-        print("Error: Only monochrom bitmaps are supported yet")
-        exit(1)
+        sys.exit("Error: Only monochrom bitmaps are supported yet")
 
 
 args = arguments()
-bytes = readFile(args.file)
-
-checkFile(bytes) #TODO: Remove the site effects!
+fileData = readFile(args.file)
+checkFormat(fileData)
 if args.verbose:
-    printMetaData(bytes, args)
-paint(getPixels(bytes))
+    printMetaData(fileData, args)
+paint(getPixels(fileData))

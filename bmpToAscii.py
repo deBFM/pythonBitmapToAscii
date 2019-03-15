@@ -3,37 +3,46 @@ import math
 from argparse import ArgumentParser
 
 def readFile(fileName):
-    #TODO as Context
     try:
-        file = open(fileName, "rb", 0)
-        bytes = file.read(-1)
-        file.close()
+        with open(fileName, "rb", 0) as file:
+            bytes = file.read(-1)
     except FileNotFoundError as e:
         sys.exit(f"File '{fileName}' not found")
     return bytes
 
 def getPixelArrayOffset(bytes):
     """
-    PixelArrayOffset: 0x0A (4Bytes)
+    :param bytes: whole image data
+    :return: the position where the pixelArrayBytes starts
     """
     return int.from_bytes(bytes[0x0a:0x0e], 'little')
 
 def getWidth(bytes):
     """
-    Width:  0x12 (4Bytes)
+    :param bytes: whole image data
+    :return: the width of the image
     """
     return int.from_bytes(bytes[0x12:0x16], 'little')
 
 def getHeight(bytes):
     """
-    Height: 0x16 (4Bytes)
+    :param bytes: whole image data
+    :return: the height of the image
     """
     return int.from_bytes(bytes[0x16:0x1a], 'little')
 
 def getPixelArrayBytes(bytes):
+    """
+    :param bytes: whole image data
+    :return: raw section (bytes) of the image which contains the pixels
+    """
     return bytes[getPixelArrayOffset(bytes):]
 
 def getPixels(bytes):
+    """
+    :param bytes: whole image data
+    :return: 2 dimensonal list of pixels
+    """
     pixels = []
     requiredBytesPerRow = math.ceil(getWidth(bytes) / 8)
     bytesPerRow = math.ceil(requiredBytesPerRow / 4) * 4
@@ -49,6 +58,10 @@ def getPixels(bytes):
     return reversed(pixels)
 
 def paint(pixels):
+    """
+    Paints the pixels to the console
+    :param pixels: 2 dimensional list with pixeldata
+    """
     for row in pixels:
         for pixel in row:
             char = " " if (pixel == "1") else "\u25A0"

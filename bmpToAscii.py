@@ -1,14 +1,16 @@
+import sys
 import math
 from argparse import ArgumentParser
 
 def readFile(fileName):
     #TODO as Context
-    #TODO catch Exception
-    file = open(fileName, "rb", 0)
-    bytes = file.read(-1)
-    file.close()
+    try:
+        file = open(fileName, "rb", 0)
+        bytes = file.read(-1)
+        file.close()
+    except FileNotFoundError as e:
+        sys.exit(f"File '{fileName}' not found")
     return bytes
-
 
 def getPixelArrayOffset(bytes):
     """

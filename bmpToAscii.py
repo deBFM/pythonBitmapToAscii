@@ -34,12 +34,6 @@ def getPixelArrayBytes(bytes):
     return bytes[getPixelArrayOffset(bytes):]
 
 def getPixels(bytes):
-    #Todo: Die Bits werden Zeilenweise geschrieben. Eine neue Zeile fängt mit einem neuen Byte an.
-    #      Wieviele Bytes eine Zeile hat, ergibt sich aus der width des Bildes!
-    #      Bytes kommen nur in 4er Sequenzen vor (4Bytes, 8Bytes, 12 Bytes ...)
-    #      Bsp.: Width 10 => 4 Bytes | (RoundUp(10 / 8)) = 2  -> 4er Byte Blocks: RoundUp(2/4) * 4 = 4
-    #            Width 30 => 4 Bytes | (RoundUp(30 / 8)  = 4  -> 4er Byte Blocks: RoundUp(4/4) * 4 = 4
-    #            Width 33 => 8 Bytes | (RoundUp(33 / 8)  = 5  -> 4er Byte Blocks: RoundUp(5/4) * 4 = 8
     pixels = []
     requiredBytesPerRow = math.ceil(getWidth(bytes) / 8)
     bytesPerRow = math.ceil(requiredBytesPerRow / 4) * 4
@@ -82,10 +76,7 @@ def checkFile(bytes):
         print("Error: Only monochrom bitmaps are supported yet")
         exit(1)
 
-#############################
-# Format: BMP (Monochrome)  #
-#############################
-#TODO Check for monochrome Bitmap (see Headers)
+
 args = arguments()
 bytes = readFile(args.file)
 

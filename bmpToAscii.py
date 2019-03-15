@@ -62,8 +62,8 @@ def paint(pixels):
         print()
 
 def printMetaData(bytes, args):
-    print("Size: {:>8d} x {:d}".format(getWidth(bytes), getHeight(bytes)))
-    print(f"Filename: {args.file:>19}")
+    print("Size:\t\t{} x {:d}".format(getWidth(bytes), getHeight(bytes)))
+    print(f"Filename:\t{args.file}")
 
 def arguments():
     parser = ArgumentParser(description="Prints monochrom bitmaps to the console",
